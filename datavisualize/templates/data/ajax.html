@@ -1,0 +1,99 @@
+{%extends 'data/base.html'%}
+
+{%block title%}Ajax Practice{%endblock%}
+
+{%block head%}
+<style type="text/css">
+	body{
+		font-family: helvatica;
+	}
+	header nav{
+		color: white;
+	}
+	header ul{
+		list-style: none;
+	}
+	header ul li{
+		display: inline-block;
+		padding: 10px;
+		font-weight: bold;
+		font-size: 18px;
+	}
+	header ul li a:hover{
+		text-decoration: none;
+	}
+	input{
+		padding: 5px 15px;
+		font-weight: bold;
+		border: 1px solid lightgrey;
+		border-radius: 4px 4px;
+	}
+</style>
+{%endblock%}
+
+{%block content%}
+<header>
+	<nav class="navbar bg-primary">
+		<h3>Ajax Tutorial</h3>		
+	</nav>
+	<ul>
+		<li><a href="/visualize/data/">Data Visualize</a></li>
+		<li><a href="/visualize/chart/data">Rest Framework</a></li>
+		<li><a href="">Ajax</a></li>
+	</ul>
+</header>
+<div class="">
+	<center>
+	    <div class="">
+	    	<h4>Django Database</h4>
+	    	<form>{%csrf_token%}
+	    		<input type="text" name="label" placeholder="Graph label" id="label">&emsp;
+	    		<input type="number" name="value" value="1" id="value"><br><br>
+	    		<button class="btn btn-success" id="but">Submit Data</button>
+	    	</form>
+	    </div>
+	    <div>
+	    	<form>
+	    		<p id="datashow"></p>
+	    		<button class="btn btn-primary" id="fetch">Fetch Data From Database</button>
+	    	</form>
+	    </div>
+    </center>
+</div>
+<script type="text/javascript">
+	mysubmit=document.getElementById('but');
+	databn=document.getElementById('fetch');
+	mysubmit.addEventListener("click",function (e) {
+		e.preventDefault();
+		$.ajax({
+			type: 'POST',
+			url: '/visualize/record/',
+			data: {
+				label:$('#label').val(),
+				value:$('#value').val(),
+				csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
+			},
+			success: function() {
+				console.log("Success");
+			},
+			error: function() {
+			    console.log("error");				
+			}
+		});
+	});
+	databn.addEventListener("click",function (e) {
+		e.preventDefault();
+		$.ajax({
+			method: 'GET',
+			url: '/visualize/chart/data/',
+			success: function(data) {
+				document.getElementById('datashow').innerHTML= data.labels + data.values;
+				console.log(data.labels);
+			},
+			error: function(error_data) {
+			    console.log(error_data);				
+			},
+		});
+	});
+</script>
+{%endblock%}
